@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*- 
+# -*- coding:utf-8 -*-
 """
 龙虎榜数据
 Created on 2015年6月10日
@@ -33,16 +33,16 @@ def top_list(date = None, retry_count=3, pause=0.001):
     date:string
                 明细数据日期 format：YYYY-MM-DD 如果为空，返回最近一个交易日的数据
     retry_count : int, 默认 3
-                 如遇网络等问题重复执行的次数 
+                 如遇网络等问题重复执行的次数
     pause : int, 默认 0
                 重复请求数据过程中暂停的秒数，防止请求间隔时间太短出现的问题
-    
+
     Return
     ------
     DataFrame
         code：代码
         name ：名称
-        pchange：涨跌幅     
+        pchange：涨跌幅
         amount：龙虎榜成交额(万)
         buy：买入额(万)
         bratio：占总成交比例
@@ -55,7 +55,7 @@ def top_list(date = None, retry_count=3, pause=0.001):
         if du.get_hour() < 18:
             date = du.last_tddate()
         else:
-            date = du.today() 
+            date = du.today()
     else:
         if(du.is_holiday(date)):
             return None
@@ -66,7 +66,7 @@ def top_list(date = None, retry_count=3, pause=0.001):
             text = urlopen(request, timeout=10).read()
             text = text.decode('GBK')
             text = text.split('_1=')[1]
-            text = eval(text, type('Dummy', (dict,), 
+            text = eval(text, type('Dummy', (dict,),
                                            dict(__getitem__ = lambda s, n:n))())
             text = json.dumps(text)
             text = json.loads(text)
@@ -101,7 +101,7 @@ def cap_tops(days= 5, retry_count= 3, pause= 0.001):
         days:int
                   天数，统计n天以来上榜次数，默认为5天，其余是10、30、60
         retry_count : int, 默认 3
-                     如遇网络等问题重复执行的次数 
+                     如遇网络等问题重复执行的次数
         pause : int, 默认 0
                     重复请求数据过程中暂停的秒数，防止请求间隔时间太短出现的问题
     Return
@@ -110,13 +110,13 @@ def cap_tops(days= 5, retry_count= 3, pause= 0.001):
         code：代码
         name：名称
         count：上榜次数
-        bamount：累积购买额(万)     
+        bamount：累积购买额(万)
         samount：累积卖出额(万)
         net：净额(万)
         bcount：买入席位数
         scount：卖出席位数
     """
-    
+
     if ct._check_lhb_input(days) is True:
         ct._write_head()
         df =  _cap_tops(days, pageNo=1, retry_count=retry_count,
@@ -125,9 +125,9 @@ def cap_tops(days= 5, retry_count= 3, pause= 0.001):
         if df is not None:
             df = df.drop_duplicates('code')
         return df
-    
-    
-def _cap_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):   
+
+
+def _cap_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):
     ct._write_console()
     for _ in range(retry_count):
         time.sleep(pause)
@@ -155,7 +155,7 @@ def _cap_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame
                 return dataArr
         except Exception as e:
             print(e)
-            
+
 
 def broker_tops(days= 5, retry_count= 3, pause= 0.001):
     """
@@ -165,7 +165,7 @@ def broker_tops(days= 5, retry_count= 3, pause= 0.001):
     days:int
               天数，统计n天以来上榜次数，默认为5天，其余是10、30、60
     retry_count : int, 默认 3
-                 如遇网络等问题重复执行的次数 
+                 如遇网络等问题重复执行的次数
     pause : int, 默认 0
                 重复请求数据过程中暂停的秒数，防止请求间隔时间太短出现的问题
     Return
@@ -185,7 +185,7 @@ def broker_tops(days= 5, retry_count= 3, pause= 0.001):
         return df
 
 
-def _broker_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):   
+def _broker_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):
     ct._write_console()
     for _ in range(retry_count):
         time.sleep(pause)
@@ -213,7 +213,7 @@ def _broker_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFr
                 return dataArr
         except Exception as e:
             print(e)
-        
+
 
 def inst_tops(days= 5, retry_count= 3, pause= 0.001):
     """
@@ -223,10 +223,10 @@ def inst_tops(days= 5, retry_count= 3, pause= 0.001):
     days:int
               天数，统计n天以来上榜次数，默认为5天，其余是10、30、60
     retry_count : int, 默认 3
-                 如遇网络等问题重复执行的次数 
+                 如遇网络等问题重复执行的次数
     pause : int, 默认 0
                 重复请求数据过程中暂停的秒数，防止请求间隔时间太短出现的问题
-                
+
     Return
     --------
     code:代码
@@ -242,10 +242,10 @@ def inst_tops(days= 5, retry_count= 3, pause= 0.001):
         df =  _inst_tops(days, pageNo=1, retry_count=retry_count,
                         pause=pause)
         df['code'] = df['code'].map(lambda x: str(x).zfill(6))
-        return df 
- 
+        return df
 
-def _inst_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):   
+
+def _inst_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):
     ct._write_console()
     for _ in range(retry_count):
         time.sleep(pause)
@@ -282,17 +282,17 @@ def inst_detail(retry_count= 3, pause= 0.001):
     Parameters
     --------
     retry_count : int, 默认 3
-                 如遇网络等问题重复执行的次数 
+                 如遇网络等问题重复执行的次数
     pause : int, 默认 0
                 重复请求数据过程中暂停的秒数，防止请求间隔时间太短出现的问题
-                
+
     Return
     ----------
     code:股票代码
-    name:股票名称     
-    date:交易日期     
-    bamount:机构席位买入额(万)     
-    samount:机构席位卖出额(万)     
+    name:股票名称
+    date:交易日期
+    bamount:机构席位买入额(万)
+    samount:机构席位卖出额(万)
     type:类型
     """
     ct._write_head()
@@ -300,10 +300,10 @@ def inst_detail(retry_count= 3, pause= 0.001):
                         pause=pause)
     if len(df)>0:
         df['code'] = df['code'].map(lambda x: str(x).zfill(6))
-    return df  
- 
+    return df
 
-def _inst_detail(pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):   
+
+def _inst_detail(pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):
     ct._write_console()
     for _ in range(retry_count):
         time.sleep(pause)
@@ -332,7 +332,67 @@ def _inst_detail(pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):
         except Exception as e:
             print(e)
 
-            
+def top_detail(code, date=None, retry_count= 3, pause= 0.001):
+    """
+    根据指定日期，指定股票的龙虎榜交易细节
+    Parameters
+    --------
+	code: string
+			指定股票代码
+	date: string
+			指定日期
+    retry_count : int, 默认 3
+                 如遇网络等问题重复执行的次数
+    pause : int, 默认 0
+                重复请求数据过程中暂停的秒数，防止请求间隔时间太短出现的问题
+
+    Return
+    --------
+    code:代码
+    name:名称
+    bamount:累积买入额(万)
+    bcount:买入次数
+    samount:累积卖出额(万)
+    scount:卖出次数
+    net:净额(万)
+    """
+    if code is None or code == "":
+        return None
+    if date is None:
+        if du.get_hour() < 18:
+            date = du.last_tddate()
+        else:
+            date = du.today()
+    else:
+        if(du.is_holiday(date)):
+            return None
+        time.sleep(pause)
+        try:
+            request = Request(rv.LHB_SINA_URL2%(ct.P_TYPE['http'], ct.DOMAINS['vsf'], code, date))
+            text = urlopen(request, timeout=10).read()
+            text = text.decode('GBK')
+            text = text.split('details=')[1][2:-2]
+            text = eval(text, type('Dummy', (dict,),
+                                           dict(__getitem__ = lambda s, n:n))())
+            text = json.dumps(text)
+            text = json.loads(text)
+            buy_df = pd.DataFrame(text['buy'], columns=rv.LHB_TMP_DETAIL_COLS)
+            buy_df['type'] = 'buy'
+            sell_df = pd.DataFrame(text['sell'], columns=rv.LHB_TMP_DETAIL_COLS)
+            sell_df['type'] = 'sell'
+            #LHB_DETAIL_COLS = ['code', 'type', 'insCode', 'insName', 'bamount', 'samount', 'net']
+            df = sell_df.append(buy_df)
+            df.columns = rv.LHB_DETAIL_COLS
+            df['bamount'] = df['bamount'].astype(float)
+            df['samount'] = df['samount'].astype(float)
+            df['net'] = df['net'].astype(float)
+            df['date'] = date
+        except Exception as e:
+            print e
+        else:
+            return df
+    raise IOError(ct.NETWORK_URL_ERROR_MSG)
+
 def _f_rows(x):
     if '%' in x[3]:
         x[11] = x[6]
@@ -341,4 +401,3 @@ def _f_rows(x):
         for i in range(1, 6):
             x[i] = np.NaN
     return x
-
